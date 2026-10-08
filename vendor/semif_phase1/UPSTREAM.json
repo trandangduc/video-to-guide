@@ -1,0 +1,20 @@
+{
+  "repository": "https://github.com/TheoLeeCJ/SemIf-OpenJev",
+  "commit": "23cf1f39fc9534fe81437200959b6dfc7106e45a",
+  "license": "MIT",
+  "files": {
+    "core.py": {
+      "upstream_path": "src/semif_phase1/core.py",
+      "sha256": "2ed5702373242f62928dbe5339fa8b3eebe716cea94816519b6c1baa27e56da5"
+    },
+    "__init__.py": {
+      "upstream_path": "src/semif_phase1/__init__.py",
+      "sha256": "5f6ed0e26bfb415745ca3a53a79130e65d1e9a98247b2d594137f7d80479c5f8"
+    },
+    "LICENSE": {
+      "upstream_path": "LICENSE",
+      "sha256": "f765f2140f8507a8f0d81ec0fd2c4bd72fe6a066841ef27883ff876a76bf61be"
+    }
+  },
+  "integration": "Unmodified upstream core; Qwen3.8 API transport is in src/inference/semif.py."
+}

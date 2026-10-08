@@ -14,3 +14,6 @@ cache/
 *.wav
 *.mp3
 *.log
+
+# Local customer dataset; unit tests create their own fixtures.
+tests/794940_B/

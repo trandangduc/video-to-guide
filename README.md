@@ -1,5 +1,20 @@
 # Video → tài liệu hướng dẫn
 
+## Pipeline tự động trên Linux với Qwen38
+
+Đọc [AUTOMATION.md](AUTOMATION.md) để chạy `run_auto.sh` / `auto_guide.py`: video → transcript thô → Qwen tự lập mục lục → đọc ảnh → viết hướng dẫn chi tiết → tự rà soát → bổ sung giải thích và kiểm định nguồn → HTML/PDF/Markdown. Không nạp nội dung hoặc ảnh đã chỉnh/chọn tay của bản mẫu cũ.
+
+Pipeline hỗ trợ xử lý các mục song song, cache và kiểm tra nội dung; các lỗi chất lượng video còn lại được ghi trong [HANDOFF.md](HANDOFF.md). Xem tài liệu bàn giao để biết kết quả đã kiểm tra và giới hạn hiện tại.
+
+Web có tab video và tab **Ảnh + mô tả → Excel**: upload mẫu XLSX, mô tả TXT, PDF và ảnh; Qwen38 đọc/ghép ảnh, giữ sheet 1–2 và header/logo. Sheet 3–4 dùng textbox và bố cục trái/phải của mẫu, căn mô tả/ảnh thẳng hàng. Cách chạy và các yêu cầu đầu vào ở [AUTOMATION.md](AUTOMATION.md). Dữ liệu mẫu riêng và đầu ra không đưa vào Git.
+
+```sh
+.venv/bin/python web_app.py --host 127.0.0.1 --port 9322
+.venv/bin/python -m unittest discover -s tests -v
+```
+
+GUI Tkinter bên dưới vẫn là prototype cũ. `requirements-local.txt` ghi các thư viện dùng cho pipeline Linux.
+
 ## Triển khai trên máy GPU
 
 Đọc [PLAN.md](PLAN.md) để tiếp tục xây dựng pipeline audio → bước hướng dẫn → chọn hình tương ứng. Đích triển khai: 2 RTX 5090, Whisper large-v3 và WhisperX, Qwen vision qua API.
@@ -20,3 +35,16 @@ Audio được xử lý trên máy này. Chỉ các khung hình đã lấy và �
 Đây là bản nháp theo các khung hình định kỳ, có thể bỏ lỡ thao tác giữa hai hình. Giảm khoảng lấy hình để có nhiều chi tiết hơn (tăng số lần gọi model). Nội dung AI và chép lời cần được kiểm tra lại. Tool không tự xác nhận thông số kỹ thuật. Nếu bị lỗi giữa chừng, ảnh và các bước hoàn thành vẫn nằm trong thư mục output; chạy lại tạo một thư mục mới. Không có chức năng tiếp tục phiên cũ.
 
 Đóng cửa sổ sẽ kết thúc tác vụ đang chạy. Whisper hiện chạy CPU; chưa hỗ trợ chọn GPU trong giao diện. Kết quả gồm HTML, ảnh, steps.json và (khi bật chép lời) audio.wav, transcript.txt, transcript.json.
+
+## Chạy web nền trên Linux
+
+Web app có thể chạy dưới dạng user service để vẫn hoạt động sau khi đóng terminal hoặc VS Code:
+
+```sh
+systemctl --user link "$(pwd)/video-to-guide-web.service"
+systemctl --user daemon-reload
+systemctl --user enable --now video-to-guide-web.service
+systemctl --user status video-to-guide-web.service
+```
+
+Web app lắng nghe cổng 9322. Xem log bằng `journalctl --user -u video-to-guide-web.service -f`; dùng `systemctl --user restart video-to-guide-web.service` hoặc `systemctl --user stop video-to-guide-web.service` để quản lý. Service bind vào `0.0.0.0` để có thể truy cập qua địa chỉ máy chủ; chỉ mở cổng này trên mạng đáng tin cậy vì ứng dụng chưa có đăng nhập.

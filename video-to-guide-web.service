@@ -1,0 +1,14 @@
+[Unit]
+Description=Video-to-guide web app on port 9322
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=%h/video-to-guide
+ExecStart=%h/video-to-guide/.venv/bin/python %h/video-to-guide/web_app.py --host 0.0.0.0 --port 9322
+Restart=on-failure
+RestartSec=3
+Environment=PYTHONUNBUFFERED=1
+
+[Install]
+WantedBy=default.target
